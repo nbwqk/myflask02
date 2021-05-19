@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        {% block title %}Title{% endblock %}
+    </title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/mycss.css') }}  ">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    {% block mycss %}
+    {% endblock %}
+</head>
+<body>
+<div id="header">
+    <ul id="ul">
+        <li class="li"><a href="#">首页</a></li>
+        <li class="li"><a href="#">食品</a></li>
+        <li class="li"><a href="#">电器</a></li>
+        <li class="li"><a href="#">教育</a></li>
+        <li class="li"><a href="#">文艺</a></li>
+    </ul>
+</div>
+<div id="content">
+    {% block content %}{% endblock %}
+</div>
+<div id="footer"></div>
+</body>
+{% block myjs %}
+{% endblock %}
+</html>

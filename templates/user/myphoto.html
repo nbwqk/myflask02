@@ -1,0 +1,41 @@
+{% extends 'base1.html' %}
+{% block title %}我的相册{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        h2{text-align: center;margin-bottom: 50px;}
+        #pname{text-align: center;}
+        #photo{width: 250px;height: 150px;border: 1px solid black;}
+        #p{margin-right: 10px;margin-bottom: 50px;float: left;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <h2>我的相册</h2>
+    </div>
+    <div class="row">
+        {% for photo in photos.items %}
+            <div id="p">
+                <a href="{{ url_for('user.photo_detail') }}?p_id={{ photo.id }}"><img  id="photo" src="{{ url_for('static',filename=photo.photo_path) }}"></a>
+                <p id="pname">{{ photo.photo_name }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <nav aria-label="...">
+          <ul class="pager">
+            {% if photos.has_prev %}
+            <li><a href="{{ url_for('user.myphoto') }}?page={{ photos.prev_num }}">上一页</a></li>
+            {% endif %}
+            {% if photos.has_next %}
+            <li><a href="{{ url_for('user.myphoto') }}?page={{ photos.next_num }}">下一页</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

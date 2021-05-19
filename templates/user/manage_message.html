@@ -1,0 +1,72 @@
+{% extends 'base1.html' %}
+{% block title %}管理留言{% endblock %}
+{% block styles %}
+{{ super() }}
+    <style>
+         #left{background-image: url("{{ url_for('static',filename='image/left_back.jpg') }}") ;
+              min-height: 500px; }
+        #left ul{margin-top: 10px;margin-left: 8px;}
+        #right{background-image: url("{{ url_for('static',filename='image/right_back.jpg') }}") ;
+               min-height: 500px;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div id="left" class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" ><a href="{{url_for('user.user_center')}}" >信息修改</a></li>
+                <li role="presentation"><a href="{{ url_for('article.publish') }}">发表文章</a></li>
+                <li role="presentation"><a href="{{ url_for('user.add_photo') }}">添加照片</a></li>
+                <li role="presentation" ><a href="{{ url_for('user.aboutme') }}">关于我</a></li>
+                <li role="presentation"  class="active"><a href="{{ url_for('user.manage_message') }}">留言管理</a></li>
+            </ul>
+        </div>
+        <div id="right" class="col-md-10">
+            <h3>留言管理</h3>
+            {% if messages %}
+            <table class="table table-bordered">
+                <tr class="danger">
+                    <td>序号</td>
+                    <td>留言内容</td>
+                    <td>留言时间</td>
+                    <td>操作</td>
+                </tr>
+                {% for message in messages.items %}
+                <tr {% if loop.index % 2 == 0 %} class="success" {% else %} class="info" {% endif %}>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ message.content }}</td>
+                    <td>{{ message.mdatetime }}</td>
+                    <td><button class="btn btn-danger btn-sm del" tag="{{ message.id }}">删除</button></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>还没有留言，赶快去留言哦。</p>
+            {% endif %}
+            <nav aria-label="..." id="daohang">
+                <ul class="pager">
+                  {% if messages.has_prev %}
+                      <li><a href="{{ url_for('user.manage_message') }}?page={{ messages.prev_num }}">上一页</a></li>
+                  {% endif %}
+                  {% if messages.has_next %}
+                      <li><a href="{{ url_for('user.manage_message') }}?page={{ messages.next_num }}">下一页</a></li>
+                  {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $('.del').click(function () {
+            flag=confirm('确定要删除这条留言吗？')
+            if(flag){
+                var m_id=$(this).attr('tag');
+                location.href='/user/del_message?m_id='+m_id;
+            }
+        })
+    </script>
+{% endblock %}

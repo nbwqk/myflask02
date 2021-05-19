@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}
+    用户展示
+{% endblock %}
+{% block content %}
+    <h2>用户展示，人数：{{ users|length }}</h2>
+    <a href="{{ url_for('user.register') }}">注册</a><a href="">登录</a>
+    <p>{{ msg }}</p>
+    {% if users %}
+    搜索：<input type="text" name="search" placeholder="用户名或电话进行搜索"><input type="button" id="search" value="搜索">
+    <table border="1" width="80%" cellspacing="0">
+        <tr>
+            <td>序号</td>
+            <td>用户名</td>
+            <td>电话</td>
+            <td>注册时间</td>
+            <td>操作</td>
+        </tr>
+        {% for user in users %}
+        <tr style="{% if loop.index%2==0 %} background-color: darkorange {% endif %}">
+            <td>{{ loop.index }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.phone }}</td>
+            <td>{{ user.rdatetime }}</td>
+            <td><a href="{{ url_for('user.update') }}?id={{ user.id }}">修改</a>
+            <a href="{{ url_for('user.delete') }}?id={{ user.id }}" >删除</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="color: red;font-size: 18px">没有用户，请赶快去注册吧！</p>
+    {% endif %}
+{% endblock %}
+{% block myjs %}
+    <script>
+        function del(username) {
+            location.href='/del?username='+username
+        }
+        function update(username) {
+            location.href='/update?username='+username
+        }
+    </script>
+    <script>
+        $('#search').click(function () {
+            let content=$("input[name='search']").val();
+            location.href='{{ url_for('user.search') }}?search='+content
+        })
+    </script>
+{% endblock %}

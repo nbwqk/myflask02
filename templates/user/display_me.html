@@ -1,0 +1,19 @@
+{% extends 'base1.html' %}
+{% block title %}我的介绍{% endblock %}
+{% block styles %}
+        {{ super() }}
+    <style>
+    .container{background-image: url("{{ url_for('static',filename='image/detail_back.jpg') }}");
+               min-height: 600px;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+{% if aboutme.conent %}
+<p>{{ aboutme.content | udecode | safe }}</p>
+{% else %}
+<p>还没有自我介绍哦，赶快去<a href="{{ url_for('user.aboutme') }}">添加</a>吧！</p>
+{% endif %}
+</div>
+{% endblock %}

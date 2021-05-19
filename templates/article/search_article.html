@@ -1,0 +1,60 @@
+{% extends 'base1.html' %}
+{% block title%}文章{% endblock %}
+{% block styles %}
+    {{ super() }}
+<style>
+    a:hover{text-decoration: none}
+    #content{background-image: url("{{ url_for('static',filename='image/detail_back.jpg') }}");margin:5px;padding:5px;}
+    #detail{margin-bottom: 40px}
+    #detail p{margin-top: 40px}
+    #detail span{margin-top: 10px}
+    #content span{margin: 0px 10px;}
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    {% if articles %}
+    {% for article in articles.items %}
+    <div id="content">
+        <div id="detail">
+            <h3><a href="{{ url_for('article.wenzhang') }}?aid={{ article.id }}">{{ article.title }}</a></h3>
+            <span>作者：{{ article.user.username }}</span>
+            <p>{{ article.content | cdecode | safe}}</p>
+        </div>
+        <span>发表时间：{{ article.pdatetime }}</span>
+        <span>点击：{{ article.click_num }}</span>
+        <span>收藏：{{ article.save_num }}</span>
+        <span>点赞：{{ article.love_num }}</span>
+        <span>文章类型：{{ article.article_type.type_name }}</span>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>没有你所需要的文章！</p>
+    {% endif %}
+    <nav aria-label="Page navigation" class="col-md-offset-4">
+      <ul class="pagination">
+        {% if articles.has_prev %}
+        <li>
+          <a href="{{ url_for('article.search_article') }}?page={{ articles.prev_num }}&content={{ content }}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {% endif %}
+        {% for page_num in range(1,articles.pages + 1) %}
+            {% if articles.page==page_num %}
+                <li class="active"><a href="{{ url_for('article.search_article') }}?page={{ page_num }}&content={{ content }}">{{ page_num }}</a></li>
+            {% else %}
+                <li><a href="{{ url_for('article.search_article') }}?page={{ page_num }}&content={{ content }}">{{ page_num }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if articles.has_next %}
+        <li>
+          <a href="{{ url_for('article.search_article') }}?page={{ articles.next_num }}&content={{ content }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+</div>
+{% endblock %}

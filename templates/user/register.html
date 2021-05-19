@@ -1,0 +1,91 @@
+{% extends 'base1.html' %}
+{% block title %}用户注册{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-xs-6 col-md-3"></div>
+    <div class="col-xs-6 col-md-6">
+        <h2 style="padding-left: 210px;padding-bottom: 10px">用户注册</h2>
+        {% if msg %}
+        <div class="alert alert-info" role="alert">{{ msg }}</div>
+        {% endif %}
+        <form class="form-horizontal" action="{{ url_for('user.register') }}" method="post">
+        <div class="form-group">
+            <label for="inputusername" class="col-md-2 control-label">用户名</label>
+            <div class="col-md-6">
+                <input type="text" name="username" class="form-control" id="inputusername" placeholder="输入用户名"><span></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputpassword"  class="col-md-2 control-label">密码</label>
+            <div class="col-md-6">
+                <input type="password" name="password" class="form-control" id="inputpassword" placeholder="输入密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputrepassword"  class="col-md-2 control-label">重输密码</label>
+            <div class="col-md-6">
+                <input type="password" name="repassword" class="form-control" id="inputrepassword" placeholder="重输密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputphone"  class="col-md-2 control-label">电话</label>
+            <div class="col-md-6">
+                <input type="number" name="phone" class="form-control" id="inputphone" placeholder="输入电话"><span> </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-md-2 control-label">Email</label>
+            <div class="col-md-6">
+                <input type="email" name="email" class="form-control" id="inputEmail3" placeholder="输入Email">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-md-10">
+                <button type="submit" class="btn btn-info col-md-6">注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;册</button>
+            </div>
+        </div>
+        </form>
+</div>
+  <div class="col-xs-6 col-md-3"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $('#inputphone').blur(function () {
+            let phone=$(this).val();
+            let span_ele=$(this).next('span');
+            if(phone.length==11){
+                span_ele.text('');
+                $.get('{{ url_for('user.check_phone') }}',{phone:phone},function (data) {
+                    if (data!=200){
+                        span_ele.css({"color":'#ff0000',"font-size":"12px"});
+                        span_ele.text(data.msg)
+                    }
+                })
+            }else{
+                span_ele.css({"color":'#ff0000',"font-size":"12px"});
+                span_ele.text('手机格式错误')
+            }
+        })
+        $('#inputusername').blur(function () {
+            let username=$(this).val()
+            let span_ele=$(this).next('span')
+            if(username.length>0){
+                span_ele.text('')
+                $.get('{{ url_for('user.check_u')}}',{username:username},function (data) {
+                  if(data!=200) {
+                      span_ele.css({"color": '#ff0000', "font-size": "12px"});
+                      span_ele.text(data.msg);
+                  }else{
+                      span_ele.css({"color": '#ff0000', "font-size": "12px"});
+                      span_ele.text(data.msg);
+                  }
+                })
+            }else{
+                span_ele.css({"color":'#ff0000',"font-size":"12px"})
+                span_ele.text('用户名不能为空')
+            }
+        })
+    </script>
+{% endblock %}

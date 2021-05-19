@@ -1,0 +1,87 @@
+{% extends 'base1.html' %}
+{% block title %}留言板{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        .container{background: url("{{ url_for('static',filename='image/detail_back.jpg') }}");
+                   min-height: 600px;
+        }
+        #tijiao{
+            margin-top: 10px;
+        }
+        .liuyan{
+            clear: both;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top:1px solid silver;
+        }
+        .left{float: left}
+        .left img{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .left p{
+            text-align: center;
+            font-size: 10px;
+        }
+        .right{
+            float: left;
+            margin-left: 40px;
+        }
+        .right p:nth-of-type(1){
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #daohang{
+            clear: both;
+        }
+        #msg{color: red}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>留言板</h3>
+            <form action="" method="post">
+                <textarea name="content" class="form-control" rows="5"></textarea>
+                <p><span id="msg">{{ msg }}</span></p>
+                <input type="submit" id="tijiao">
+            </form>
+        </div>
+    </div>
+    {% for message in messages.items %}
+    <div class="liuyan">
+        <div class="left">
+            <img {% if message.user_id==0 %}
+                    src="{{ url_for('static',filename='image/touxiang.jpg') }}"
+                 {% else %}
+                    src="{{ url_for('static',filename=message.user.icon) }}"
+                 {% endif %}>
+            <p>
+                {% if message.user_id==0 %}
+                 匿名用户
+                {% else %}
+                {{ message.user.username }}
+                {% endif %}
+            </p>
+        </div>
+        <div class="right">
+            <p>{{ message.content }}</p>
+            <p>{{ message.mdatetime }}</p>
+        </div>
+    </div>
+    {% endfor %}
+    <nav aria-label="..." id="daohang">
+        <ul class="pager">
+          {% if messages.has_prev %}
+              <li><a href="{{ url_for('user.message') }}?page={{ messages.prev_num }}">上一页</a></li>
+          {% endif %}
+          {% if messages.has_next %}
+              <li><a href="{{ url_for('user.message') }}?page={{ messages.next_num }}">下一页</a></li>
+          {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

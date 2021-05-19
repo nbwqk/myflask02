@@ -1,0 +1,39 @@
+{% extends 'base1.html' %}
+{% block title %}相册{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #photo_title{text-align: center;}
+        #photo_title h2{margin-bottom: 50px;}
+        #photo_title span:nth-of-type(1){margin-right: 20px;font-size: 16px;}
+        #photo_title span:nth-of-type(2){margin-left: 20px;font-size: 16px;}
+        #photo{text-align: center;margin-top: 80px;margin-bottom: 50px;}
+        ul li:nth-of-type(1){margin-right: 20px;}
+        ul li:nth-of-type(2){margin-left: 20px;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div id="photo_title" class="row">
+        <h2>{{ photo.photo_name }}</h2>
+        <span>作者：{{ photo.user.id }}</span>
+        <span>发布日期：{{ photo.photo_datetime }}</span>
+    </div>
+    <div id="photo" class="row">
+        <img src="{{ url_for('static',filename=photo.photo_path) }}">
+    </div>
+    <div class="row">
+        <nav aria-label="...">
+          <ul class="pager">
+            <li><a href="{{ url_for('user.photo_detail') }}?p_id={{ photo.id - 1 }}">上一张</a></li>
+            <li><a href="{{ url_for('user.photo_detail') }}?p_id={{ photo.id + 1 }}">下一张</a></li>
+          </ul>
+        </nav>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'base1.html' %}
+{% block title %}
+    用户登录
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #tab {font-size: 18px;
+              font-weight: bold;
+              margin-bottom: 10px;
+              margin-top: 20px;
+              cursor: pointer;  }
+    </style>
+{% endblock %}
+{% block content %}
+<div class="col-xs-6 col-md-3"></div>
+<div class="col-xs-6 col-md-6">
+    <h2 style="padding-left: 210px;margin-bottom: 10px">用户登录</h2>
+    {% if msg %}
+    <div class="alert alert-info" role="alert">{{ msg }}</div>
+    {% endif %}
+    <div id="tab">
+        <span>用户名 / 密码</span>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; &nbsp;&nbsp;<span>手机验证码</span>
+    </div>
+    <div class="logintab">
+    <form class="form-horizontal" action="{{url_for('user.login')}}?f=1" method="post">
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="text" name="username" class="form-control" id="inputusername" placeholder="输入用户名"><span></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="password" name="password" class="form-control" id="inputpassword" placeholder="输入密码">
+        </div>
+    </div>
+    <div class="form-group">
+         <div class=" col-md-10">
+                <button type="submit" class="btn btn-default col-md-5">登录</button>
+                <div class="col-md-2"></div>
+                <button type="reset" class="btn btn-default col-md-5">重置</button>
+        </div>
+    </div>
+</form>
+    </div>
+    <div class="logintab">
+        <form class="form-horizontal" action="{{ url_for('user.login') }}?f=2" method="post">
+        <div class="form-group">
+            <div class="col-md-10 ">
+                 <input type="text" name="phone" class="form-control" id="inputphone" placeholder="手机号码"><span style="color: red;font-size: 12px;"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-5 ">
+                 <input type="text" name="code" class="form-control" id="inputcode" placeholder="验证码">
+            </div>
+            <div class="col-md-5 col-md-offset-1 ">
+                 <input type="button" id="btncheck" class="btn btn-info col-md-9" value="发送验证码">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class=" col-md-10">
+                <button type="submit" class="btn btn-default col-md-5">登录</button>
+                <div class="col-md-2"></div>
+                <button type="reset" class="btn btn-default col-md-5">重置</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<div class="col-xs-6 col-md-3"></div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+    $(function () {
+            $(".logintab").hide();
+            $(".logintab").first().show();
+            $("#tab span").each(function (i) {
+                $(this).click(function () {
+                    $(".logintab").hide();
+                    $(".logintab").eq(i).show();
+                })
+            });
+        })
+
+    // 发送验证码
+    $('#btncheck').click(function () {
+            let phone=$('#inputphone').val();
+            let span_ele=$('#inputphone').next('span');
+            if(phone.length==11){
+                $.get('{{ url_for('user.send_message') }}',{phone:phone},function (data) {
+                    if(data.code==200){
+                        console.log(data)
+                        alert(data.msg)
+                    }else{
+                        alert(data.msg)
+                    }
+                })
+            }else{
+                span_ele.text('必须输入11位手机')
+            }
+        })
+    </script>
+{% endblock %}

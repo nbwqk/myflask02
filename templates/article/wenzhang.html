@@ -1,0 +1,125 @@
+{% extends 'base1.html' %}
+{% block title %}文章详情{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        a{text-decoration: none}
+        .container{background-image: url("{{ url_for('static',filename='image/detail_back.jpg') }}")}
+        h2{margin-top: 30px;margin-bottom: 30px;}
+        #header{border-bottom: solid silver 1px;padding-bottom: 10px;}
+        #writer{margin-right: 50px;}
+        #body{margin-top: 30px;margin-bottom: 30px;}
+        #footer{margin-top: 30px;margin-bottom: 30px;border-top: solid silver 1px;padding-top: 20px;}
+        #footer .dibu{margin-right: 50px;}
+        .glyphicon-heart{cursor: pointer;}
+        .glyphicon-star{cursor: pointer;}
+        #add_comment form input{margin-top: 10px;margin-bottom: 10px;}
+        .comment_item{border-top: 1px solid silver;padding-top: 20px;clear: both;}
+        .item_left{float: left;}
+        .item_right{float: left;margin-left: 50px;}
+        .item_left img{width: 40px;height: 40px;border-radius: 50%;}
+        nav{clear: both;}
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div id="header">
+            <h2>{{ article.title }}</h2>
+            <span id="writer">作者：{{ article.user.username }}</span>
+            <span class="glyphicon glyphicon-leaf" aria-hidden="true"></span>
+            <span>{{ article.pdatetime }}</span>
+        </div>
+        <p id="body">{{ article.content | wdecode | safe }}</p>
+        <div id="footer">
+            <span class="dibu">
+                <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                <span>阅读量：{{ article.click_num }}</span>
+            </span>
+            <span class="dibu">
+                <span class="glyphicon glyphicon-heart" aria-hidden="true" ></span>
+                <span>点赞：</span><span id="love" tag="0">{{ article.love_num }}</span>
+            </span>
+            <span class="dibu">
+                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                <span>收藏：</span><span id="save" tag="0">{{ article.save_num }}</span>
+            </span>
+        </div>
+        {% if user %}
+        <div class="row">
+            <div id="add_comment" class="col-md-4">
+                <p>请发表评论：</p>
+                <form action="{{ url_for('article.add_comment') }}" method="post">
+                    <textarea name="comment" class="form-control" rows="3"></textarea>
+                    <input type="hidden" name="a_id" value="{{ article.id }}">
+                    <input type="submit" value="提交">
+                </form>
+            </div>
+        </div>
+        {% endif %}
+        {% if comments %}
+            {% for comment in comments.items %}
+                <div class="comment_item">
+                    <div class="item_left">
+                        <img {% if comment.user.icon %} src="{{ url_for('static',filename=comment.user.icon) }}" {% else %} src="{{ url_for('static',filename='image/touxiang.jpg') }}" {% endif %} >
+                    </div>
+                    <div class="item_right">
+                        <p>{{ comment.user.username }}</p>
+                        <p>{{ comment.comment }}</p>
+                        <p>{{ comment.cdatetime }}</p>
+                    </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="comment_item">
+                <p>还没有评论，请赶快发表评论哦！</p>
+            </div>
+        {% endif %}
+        <nav aria-label="...">
+            <ul class="pager">
+              {% if comments.has_prev %}
+                  <li><a href="{{ url_for('article.wenzhang') }}?aid={{ article.id }}&page={{ comments.prev_num }}">上一页</a></li>
+              {% endif %}
+              {% if comments.has_next %}
+                  <li><a href="{{ url_for('article.wenzhang') }}?aid={{ article.id }}&page={{ comments.next_num }}">下一页</a></li>
+              {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            // 点赞
+            $('.glyphicon-heart').click(function () {
+                let tag_ele=$('#love').attr('tag');
+                $.get('{{ url_for('article.article_love') }}',{aid:{{ article.id }},tag:tag_ele},function (data) {
+                   $('#love').text(data.num);
+                })
+                 if(tag_ele == 0){
+                     $('#love').attr('tag','1');
+                     $('.glyphicon-heart').css({'color':'red'});
+                     }
+                 else {
+                     $('#love').attr('tag','0');
+                     $('.glyphicon-heart').css({'color':'black'});
+                     }
+            })
+
+            $('.glyphicon-star').click(function () {
+                let tag_ele=$('#save').attr('tag');
+                $.get('{{ url_for('article.article_save') }}',{aid:{{article.id}},tag:tag_ele},function (data) {
+                     $('#save').text(data.num);
+                })
+                if(tag_ele==0){
+                    $('#save').attr('tag','1');
+                    $('.glyphicon-star').css({'color':'red'});
+                }
+                else{
+                    $('#save').attr('tag','0');
+                    $('.glyphicon-star').css({'color':'black'});
+                }
+            })
+        })
+    </script>
+{% endblock %}

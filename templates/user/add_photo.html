@@ -1,0 +1,98 @@
+{% extends 'base1.html' %}
+{% block title %}相册上传{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #left{background-image: url("{{ url_for('static',filename='image/left_back.jpg') }}") ;
+              min-height: 500px; }
+        #left ul{margin-top: 10px;margin-left: 8px;}
+        #right{background-image: url("{{ url_for('static',filename='image/right_back.jpg') }}") ;
+               min-height: 500px;}
+        #add_photo{margin-top: 10px;margin-left: 10px;border-bottom: solid 1px silver}
+        .form-group label{font-size: 16px;margin-bottom: 10px;}
+        #list_photo{margin-left: 10px;margin-top: 10px;}
+        .text-center{font-size: 20px;font-weight: bold;}
+        .photo{margin-top: 10px;float: left;margin-right: 20px;}
+        .photo img{width: 150px;height: 100px;border: solid 1px black;}
+        .photo p{text-align: center;margin-top: 5px;}
+        #p_name{width: 200px;height: 30px;margin-bottom: 10px;}
+        #daohang{text-align: center;}
+        .photo_del{margin-left: 55px;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div id="left" class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" ><a href="{{url_for('user.user_center')}}" >信息修改</a></li>
+                <li role="presentation"><a href="{{ url_for('article.publish') }}">发表文章</a></li>
+                <li role="presentation" class="active"><a href="{{ url_for('user.add_photo') }}">添加照片</a></li>
+                <li role="presentation" ><a href="{{ url_for('user.aboutme') }}">关于我</a></li>
+                <li role="presentation" ><a href="{{ url_for('user.manage_message') }}">留言管理</a></li>
+            </ul>
+        </div>
+        <div id="right" class="col-md-10">
+            <form id="add_photo" action="{{ url_for('user.add_photo') }}" enctype="multipart/form-data" method="post">
+                <div class="form-group">
+                    <label for="exampleInputFile">上传照片</label>
+                    <input type="file" id="exampleInputFile" name="photo">
+                    <p class="help-block">请选择.jgp|.jpeg|.bmp|.png|格式的图片</p>
+                    <input type="text" id="p_name" class="form-control" name="p_name" placeholder="图片名称">
+                    <button type="submit" class="btn btn-default">上传</button>
+                    {% if msg %}
+                        <div class="alert alert-info" role="alert">{{ msg }}</div>
+                    {% endif %}
+                </div>
+            </form>
+            <div id="list_photo">
+                <p class="text-center">{{ user.username }}&nbsp;&nbsp;的&nbsp;&nbsp;照&nbsp;&nbsp;片</p>
+                {% for photo in photos.items %}
+                <div class="photo">
+                    <img src="{{ url_for('static',filename=photo.photo_path) }}">
+                    <p>{{ photo.photo_name }}</p>
+                    <button class="btn btn-info btn-sm photo_del" tag="{{ photo.id }}">删除</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="daohang">
+        <nav aria-label="Page navigation">
+              <ul class="pagination">
+              {% if photos.has_prev %}
+                <li>
+                  <a href="{{ url_for('user.add_photo') }}?page={{ photos.prev_num }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+              {% endif %}
+              {% for page in range(1,photos.pages + 1) %}
+                <li {% if photos.page==page %} class="active" {% endif %}><a href="{{ url_for('user.add_photo') }}?page={{ page }}">{{ page }}</a></li>
+              {% endfor %}
+              {% if photos.has_next %}
+                <li>
+                  <a href="{{ url_for('user.add_photo') }}?page={{ photos.next_num }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              {% endif %}
+              </ul>
+            </nav>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $('.photo_del').click(function () {
+            flag=confirm('确定要删除这张图片吗？')
+            if(flag){
+                var p_id=$(this).attr('tag');
+                location.href='{{ url_for('user.photo_del') }}?pid=' + p_id;
+            }
+
+
+        })
+    </script>
+{% endblock %}
